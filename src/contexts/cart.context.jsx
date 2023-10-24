@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useEffect, useReducer } from 'react';
 
 export const addCartItem = (cartItems, productToAdd) => {
   const existingCartItem = cartItems.find(
@@ -15,6 +15,45 @@ export const addCartItem = (cartItems, productToAdd) => {
 
   return [...cartItems, { ...productToAdd, quantity: 1 }];
 };
+
+export const CART_ACTION_TYPES = {
+  SET_IS_CART_OPEN: 'SET_IS_CART_OPEN',
+  SET_CART_ITEMS: 'SET_CART_ITEMS',
+  SET_CART_ITEM_COUNT: 'SET_CART_ITEM_COUNT',
+  SET_CART_TOTAL: 'SET_CART_TOTAL'
+}
+
+const cartReducer = (state, action) => {
+  console.log(action)
+  const { type, payload } = action
+
+  switch(type){
+    case CART_ACTION_TYPES.SET_IS_CART_OPEN:
+      return {
+        ...state,
+        isCartOpen: payload
+      }
+    case CART_ACTION_TYPES.SET_CART_ITEMS:
+      return {
+        ...state,
+        cartItems: payload
+      }
+    case CART_ACTION_TYPES.SET_CART_ITEM_COUNT:
+      return {
+        ...state,
+        cartItemCount: payload
+      }
+    case CART_ACTION_TYPES.SET_CART_TOTAL:
+      return {
+        ...state,
+        cartTotal: payload
+      }
+    default:
+      throw new Error(`Unhandled type ${type} in cartReducer` )
+  }
+
+
+}
 
 const removeCartItem = (cartItems, cartItemToRemove) => {
   // find the cart item to remove
@@ -49,12 +88,33 @@ export const CartContext = createContext({
   cartTotal:0,
 });
 
-export const CartProvider = ({ children }) => {
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
-  const [cartItemCount, setCartItemCount] = useState(0);
-  const [cartTotal, setCartTotal] = useState(0);
+const INITIAL_STATE = {
+  isCartOpen: false,
+  cartItems: [],
+  cartItemCount: 0,
+  cartTotal: 0,
+}
 
+export const CartProvider = ({ children }) => {
+  const [ {isCartOpen, cartItems, cartItemCount, cartTotal}, dispatch ] = useReducer(cartReducer, INITIAL_STATE)
+
+
+
+  const setIsCartOpen = (isCartOpen) => {
+    dispatch({ type: CART_ACTION_TYPES.SET_IS_CART_OPEN, payload: isCartOpen})
+  }
+
+  const setCartItems = (cartItems) => {
+    dispatch({type: CART_ACTION_TYPES.SET_CART_ITEMS, payload: cartItems})
+  }
+
+  const setCartItemCount = (cartItemCount) => {
+    dispatch({ type: CART_ACTION_TYPES.SET_CART_ITEM_COUNT, payload: cartItemCount})
+  }
+
+  const setCartTotal = (cartTotal) => {
+    dispatch({ type: CART_ACTION_TYPES.SET_CART_TOTAL, payload: cartTotal})
+  } 
 
   useEffect(() => {
     const count = cartItems.reduce(
