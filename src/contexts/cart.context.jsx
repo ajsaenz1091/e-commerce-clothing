@@ -24,7 +24,6 @@ export const CART_ACTION_TYPES = {
 }
 
 const cartReducer = (state, action) => {
-  console.log(action)
   const { type, payload } = action
 
   switch(type){
@@ -97,8 +96,6 @@ const INITIAL_STATE = {
 
 export const CartProvider = ({ children }) => {
   const [ {isCartOpen, cartItems, cartItemCount, cartTotal}, dispatch ] = useReducer(cartReducer, INITIAL_STATE)
-
-
 
   const setIsCartOpen = (isCartOpen) => {
     dispatch({ type: CART_ACTION_TYPES.SET_IS_CART_OPEN, payload: isCartOpen})

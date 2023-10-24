@@ -11,7 +11,6 @@ const CATEGORIES_ACTION_TYPES = {
 }
 
 const categoriesReducer = (state, action) => {
-  console.log(action)
   const { type, payload } = action
 
   switch(type){
@@ -30,11 +29,9 @@ const INITIAL_STATE = {
 }
 
 export const CategoriesProvider = ({ children }) => {
-  // const [categoriesMap, setCategoriesMap] = useState({});
-
+  
   const [{ categoriesMap }, dispatch ] = useReducer(categoriesReducer, INITIAL_STATE)
 
-  console.log(categoriesMap)
 
   const setCategoriesMap = (categoriesMap) => {
     dispatch({ type: CATEGORIES_ACTION_TYPES.SET_CATEGORIES_MAP, payload: categoriesMap})
